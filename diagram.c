@@ -20,8 +20,7 @@ void print_diagram(const Symbol *s, size_t len)
 {
 
     /* to "amplify" symbols to retain information after cast to int */
-    const int M = sqrt(len);
-    const float MUL_CONST = 20.0 / M;
+    const float MUL_CONST = 10.0 / max_i(s, len); 
 
     /* draw the x axis */
     clear();
@@ -53,7 +52,7 @@ void print_diagram(const Symbol *s, size_t len)
 
         gotoxy(sym_x, sym_y);
 
-        printf("%02x", s[i].val);
+        printf("%x", s[i].val);
     }
 
     /* put cursor back in a sociable place */

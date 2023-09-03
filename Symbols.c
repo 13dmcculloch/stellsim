@@ -5,12 +5,6 @@
 
 #include "Symbols.h"
 
-void print_symbol(const Symbol s)
-{
-    double arg_d = s.arg * 180 / M_PI;
-    printf("%d: i = \t%f, q = \t%f, mag = \t%f, arg = \t%f deg", 
-        s.val, s.i, s.q, s.mag, arg_d);
-}
 
 Symbol *construct_lookup(const Symbol_Ref *r, size_t len)
 {
@@ -53,7 +47,8 @@ Symbol *gen_lookup_QAM(int M, char flag, size_t *len)
             printf("\ngen_lookup_QAM: Flag not recognised.\n");
     }
 
-    printf("done.\n");
+    if(s != NULL) printf("done.\n");
+
     return s;
 }
 
@@ -65,8 +60,9 @@ Symbol *gen_lookup_QAM_dumb(int M, size_t *len)
         return NULL;
     }
 
-    *len = pow(2, M); 
-    Symbol *s = malloc(*len * sizeof(*s));
+    *len = M; 
+    M = sqrt(M);
+    Symbol *s = malloc(M * sizeof(*s));
 
     int q_start = -1 * M / 2;
     int q_stop = M / 2;
@@ -107,6 +103,13 @@ Symbol *gen_lookup_QAM_dumb(int M, size_t *len)
     return s;
 }
 
+void print_symbol(const Symbol s)
+{
+    double arg_d = s.arg * 180 / M_PI;
+    printf("%d: i = \t%f, q = \t%f, mag = \t%f, arg = \t%f deg", 
+        s.val, s.i, s.q, s.mag, arg_d);
+}
+
 void print_lookup(const Symbol *l, size_t len)
 {
     for(size_t i = 0; i < len; i++)
@@ -114,6 +117,19 @@ void print_lookup(const Symbol *l, size_t len)
         print_symbol(l[i]);
         printf("\n");
     }
+}
+
+double max_i(const Symbol *s, size_t len)
+{
+    /* an awful algorithm to get maximum in-phase value for print_diagram */
+    double max = 0;
+
+    for(size_t i = 0; i < len; i++)
+    {
+       if(s[i].i > max) max = s[i].i;
+    }
+
+    return max;
 }
 
 Symbol set_symbol(int i, int q, int val)
@@ -130,6 +146,7 @@ Symbol set_symbol(int i, int q, int val)
 
     return s;
 }
+
 
 const Symbol_Ref BPSK[2] = {
     {-1,    0},

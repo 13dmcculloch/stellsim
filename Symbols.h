@@ -42,6 +42,7 @@ typedef struct Symbol_Ref Symbol_Ref;
 Symbol set_symbol(int i, int q, int val);
 void print_symbol(const Symbol s);
 void print_lookup(const Symbol *l, size_t len);
+double max_i(const Symbol *s, size_t len);
 
 // construct a lookup table from an integer reference
 Symbol *construct_lookup(const Symbol_Ref *r, size_t len);

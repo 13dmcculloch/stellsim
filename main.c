@@ -22,8 +22,6 @@ int main(int argc, char **argv)
     Symbol *lookup = gen_lookup_QAM(M, 'd', &len);
     MEM_CHECK(lookup)
 
-    printf("Number of symbols = %d\n", len);
-
     print_lookup(lookup, len);
     //print_diagram(lookup, len);
 

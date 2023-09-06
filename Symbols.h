@@ -40,6 +40,7 @@ typedef struct Symbol_Ref Symbol_Ref;
 
 /* Functions */
 Symbol set_symbol(int i, int q, int val);
+Symbol set_symbolf(double i, double q, int val);
 void print_symbol(const Symbol s);
 void print_lookup(const Symbol *l, size_t len);
 double max_i(const Symbol *s, size_t len);

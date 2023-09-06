@@ -23,7 +23,7 @@ Symbol *construct_lookup(const Symbol_Ref *r, size_t len)
         s[i].q = s_q;
 
         s[i].mag = hypot(s_i, s_q);
-        s[i].arg = atan(s_q / s_i);
+        s[i].arg = atan2(s_q, s_i);
 
         s[i].val = i;
     }
@@ -103,6 +103,37 @@ Symbol *gen_lookup_QAM_dumb(int M, size_t *len)
     return s;
 }
 
+Symbol set_symbol(int i, int q, int val)
+{
+    Symbol s; 
+
+    s.i = i;
+    s.q = q;
+
+    s.mag = hypot(i, q);
+    s.arg = atan2(q, i);
+    
+    s.val = val;
+
+    return s;
+}
+
+/* C is a statically typed language */
+Symbol set_symbolf(double i, double q, int val)
+{
+    Symbol s; 
+
+    s.i = i;
+    s.q = q;
+
+    s.mag = hypot(i, q);
+    s.arg = atan2(q, i);
+    
+    s.val = val;
+
+    return s;
+}
+
 void print_symbol(const Symbol s)
 {
     double arg_d = s.arg * 180 / M_PI;
@@ -131,22 +162,6 @@ double max_i(const Symbol *s, size_t len)
 
     return max;
 }
-
-Symbol set_symbol(int i, int q, int val)
-{
-    Symbol s; 
-
-    s.i = i;
-    s.q = q;
-
-    s.mag = hypot(i, q);
-    s.arg = atan(q / i);
-    
-    s.val = val;
-
-    return s;
-}
-
 
 const Symbol_Ref BPSK[2] = {
     {-1,    0},

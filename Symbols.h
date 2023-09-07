@@ -8,6 +8,9 @@
  * Douglas McCulloch, 09/23
  */
 
+#ifndef SYMBOL_H
+#define SYMBOL_H
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stddef.h>
@@ -57,3 +60,5 @@ Symbol *gen_lookup_QAM_dumb(int M, size_t *len);
 extern const Symbol_Ref BPSK[2];
 extern const Symbol_Ref QPSK[4];
 extern const Symbol_Ref HPSK[8]; // 8PSK
+
+#endif

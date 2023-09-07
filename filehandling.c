@@ -19,10 +19,10 @@ Symbol *file_int(const char* filename)
     /* non-generic part: parse CSV of ints */
     int i, q;
     int idx = 0;
-    while(fscanf(fp, "%d,%d", &i, &q) == 2)
+    while(fscanf(fp, "%d,%d\n", &i, &q) == 2)
     {
         s[idx] = set_symbol(i, q, idx);
-        idx++;  // can I do this within expression?
+        ++idx;  // if in above, then get -Wsequence-point
     }
 
     return s;
@@ -40,10 +40,10 @@ Symbol *file_dbl(const char* filename)
     /* non-generic part: parse CSV of doubles */
     double i, q;
     int idx = 0;
-    while(fscanf(fp, "%f,%f", &i, &q) == 2)
+    while(fscanf(fp, "%lf,%lf\n", &i, &q) == 2)
     {
         s[idx] = set_symbolf(i, q, idx);
-        idx++;
+        ++idx;
     }
 
     return s;
@@ -51,12 +51,11 @@ Symbol *file_dbl(const char* filename)
 
 FILE *open_file(const char *filename)
 {
-    FILE *fp = fopen(filename, 'r');
+    FILE *fp = fopen(filename, "r");
     if(fp == NULL)
-    {
         printf("Failed to open file %s.\n", filename);
-        return NULL;
-    }
+
+    return fp;
 }
 
 size_t count_lines(FILE *fp)

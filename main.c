@@ -3,8 +3,8 @@
 
 #define FMT HPSK
 
-//#include "Symbols.h"
 #include "diagram.h"
+#include "filehandling.h"
 
 void symbol_size();
 

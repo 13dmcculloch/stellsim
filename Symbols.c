@@ -35,7 +35,7 @@ Symbol *gen_lookup_QAM(int M, char flag, size_t *len)
 {
     printf("Generating lookup table...");
 
-    Symbol *s = NULL;
+    Symbol *s;
 
     switch(flag)
     {
@@ -47,8 +47,6 @@ Symbol *gen_lookup_QAM(int M, char flag, size_t *len)
             printf("\ngen_lookup_QAM: Flag not recognised.\n");
     }
 
-    if(s != NULL) printf("done.\n");
-
     return s;
 }
 
@@ -59,6 +57,12 @@ Symbol *gen_lookup_QAM_dumb(int M, size_t *len)
         printf("Modulation order must be even for 16, 64, 256-QAM!\n");
         return NULL;
     }
+
+    /* Disclaimer */
+    printf("Disclaimer: This constellation diagram generator "\
+        "algorithm does not produce "\
+        "a Gray coded scheme. It is primarily used as a debugging tool and "\
+        "should not be used for modulation.\n");
 
     *len = M; 
     M = sqrt(M);
@@ -99,6 +103,8 @@ Symbol *gen_lookup_QAM_dumb(int M, size_t *len)
             }
         }
     }
+
+    printf("done\n");
 
     return s;
 }

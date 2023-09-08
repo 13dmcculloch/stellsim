@@ -11,8 +11,8 @@
 #include "Symbols.h"
 
 /* Return lookup tables */
-Symbol *file_int(const char *filename);  // sqrt int notation
-Symbol *file_dbl(const char *filename);  // float notation
+Symbol *file_int(const char *filename, size_t *len);  // sqrt int notation
+Symbol *file_dbl(const char *filename, size_t *len);  // float notation
 
 /* Generic file functions */
 FILE *open_file(const char *filename);

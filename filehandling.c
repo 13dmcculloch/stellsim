@@ -7,7 +7,7 @@
 
 #include "filehandling.h"
 
-Symbol *file_int(const char* filename)
+Symbol *file_int(const char* filename, size_t *len)
 {
     FILE *fp = open_file(filename);
     if(fp == NULL) return NULL;  // yes, I'm doing two checks. print is big
@@ -25,10 +25,12 @@ Symbol *file_int(const char* filename)
         ++idx;  // if in above, then get -Wsequence-point
     }
 
+    *len = n_symbols;
+
     return s;
 }
 
-Symbol *file_dbl(const char* filename)
+Symbol *file_dbl(const char* filename, size_t *len)
 {
     FILE *fp = open_file(filename);
     if(fp == NULL) return NULL;
@@ -45,6 +47,8 @@ Symbol *file_dbl(const char* filename)
         s[idx] = set_symbolf(i, q, idx);
         ++idx;
     }
+
+    *len = n_symbols;
 
     return s;
 }

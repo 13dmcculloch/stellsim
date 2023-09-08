@@ -35,7 +35,7 @@ Symbol *gen_lookup_QAM(int M, char flag, size_t *len)
 {
     printf("Generating lookup table...");
 
-    Symbol *s;
+    Symbol *s = NULL;
 
     switch(flag)
     {

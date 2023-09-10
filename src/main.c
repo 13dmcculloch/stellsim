@@ -4,8 +4,7 @@
 #include <unistd.h>
 #include <string.h>
 
-#include "diagram.h"
-#include "filehandling.h"
+#include "console.h"
 
 /* Program control */
 int set_flags(int argc, char **argv);
@@ -18,6 +17,7 @@ void symbol_size();
 /* Flags */
 int f_gen = 0, f_ifile = 0, f_dfile = 0;
 int f_table = 0, f_diagram = 0;
+int f_console = 0;
 
 /* Control vars */
 int mod_order;
@@ -50,6 +50,9 @@ int main(int argc, char **argv)
         return 1;
     }
 
+    if(f_console)
+        if(console(lookup, lookup_len)) return 1;
+
     free(lookup);
 
     return 0;
@@ -58,7 +61,7 @@ int main(int argc, char **argv)
 int set_flags(int argc, char **argv)
 {
     int opt;
-    while((opt = getopt(argc, argv, "g:M:i:d:ta")) != -1)
+    while((opt = getopt(argc, argv, "g:M:i:d:tac")) != -1)
     {
         switch(opt) {
         case 'g':
@@ -86,6 +89,10 @@ int set_flags(int argc, char **argv)
 
         case 'a':
             f_diagram = 1;
+            break;
+
+        case 'c':
+            f_console = 1;
             break;
 
         default:
@@ -141,7 +148,7 @@ int build_table()
         lookup = file_dbl(filename, &lookup_len);
         MEM_CHECK(lookup);
     }
-    
+
     return 0;
 }    
 
@@ -151,7 +158,7 @@ int display_data()
         print_lookup(lookup, lookup_len);
 
     if(f_diagram)
-        print_diagram(lookup, lookup_len);
+        print_diagram(lookup, lookup_len, 's');
     
     return 0;
 }

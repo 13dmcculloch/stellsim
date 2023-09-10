@@ -42,10 +42,17 @@ struct Symbol_Ref
 typedef struct Symbol_Ref Symbol_Ref;
 
 /* Functions */
+// cartesian
 Symbol set_symbol(int i, int q, int val);
 Symbol set_symbolf(double i, double q, int val);
+
+// polar
+Symbol set_symbolp(double mag, double arg, int val);
+Symbol noise_symbol(Symbol s, double mag, double arg);
+
+// symbol functions
 void print_symbol(const Symbol s);
-void print_lookup(const Symbol *l, size_t len);
+void print_lookup(const Symbol *l, size_t len);  // print_symbols = confusing
 double max_i(const Symbol *s, size_t len);
 
 // construct a lookup table from an integer reference

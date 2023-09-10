@@ -13,6 +13,7 @@
 /* Return lookup tables */
 Symbol *file_int(const char *filename, size_t *len);  // sqrt int notation
 Symbol *file_dbl(const char *filename, size_t *len);  // float notation
+Symbol *file_plr(const char *filename, size_t *len);  // polar notation
 
 /* Generic file functions */
 FILE *open_file(const char *filename);

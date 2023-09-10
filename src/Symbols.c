@@ -1,10 +1,11 @@
 /* Symbol reference variable declarations.
  *
+ * Symbol function prototypes.
+ *
  * Douglas McCulloch, 09/23
  */
 
 #include "Symbols.h"
-
 
 Symbol *construct_lookup(const Symbol_Ref *r, size_t len)
 {
@@ -59,14 +60,14 @@ Symbol *gen_lookup_QAM_dumb(int M, size_t *len)
     }
 
     /* Disclaimer */
-    printf("Disclaimer: This constellation diagram generator "\
+    printf("\nDisclaimer: This constellation diagram generator "\
         "algorithm does not produce "\
         "a Gray coded scheme. It is primarily used as a debugging tool and "\
         "should not be used for modulation.\n");
 
     *len = M; 
-    M = sqrt(M);
     Symbol *s = malloc(M * sizeof(*s));
+    M = sqrt(M);
 
     int q_start = -1 * M / 2;
     int q_stop = M / 2;
@@ -138,6 +139,31 @@ Symbol set_symbolf(double i, double q, int val)
     s.val = val;
 
     return s;
+}
+
+Symbol set_symbolp(double mag, double arg, int val)
+{
+    Symbol s;
+
+    s.mag = mag;
+    s.arg = arg;
+
+    s.i = mag * cos(arg);
+    s.q = mag * sin(arg);
+
+    s.val = val;
+
+    return s;
+}
+
+Symbol noise_symbol(Symbol s, double mag, double arg)
+{
+    double n_mag = s.mag + mag;
+    double n_arg = s.arg + arg;
+
+    Symbol n = set_symbolp(n_mag, n_arg, s.val);
+
+    return n;
 }
 
 void print_symbol(const Symbol s)

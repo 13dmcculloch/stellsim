@@ -20,4 +20,10 @@
  * noise) through the command line arguments.
  */
 int console(Symbol *lookup, size_t lookup_len);
-int handle_input(const char *input);
+
+char **parse_input(char *input, size_t input_len, int *argc);
+int handle_input(char **argv);
+
+int free_argv(int argc, char ***argv);
+
+void print_input(int argc, char **argv);

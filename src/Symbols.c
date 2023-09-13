@@ -65,6 +65,8 @@ Symbol *gen_lookup_QAM_dumb(int M, size_t *len)
         "a Gray coded scheme. It is primarily used as a debugging tool and "\
         "should not be used for modulation.\n");
 
+    printf("Generating lookup table...");
+
     *len = M; 
     Symbol *s = malloc(M * sizeof(*s));
     M = sqrt(M);

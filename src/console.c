@@ -12,7 +12,7 @@ int f_exit = 0;
 /* toy prototypes */
 void enter_console_msg();
 
-int console(Symbol *lookup, size_t lookup_len)
+int console(Symbol_Data *symbols)
 {
     enter_console_msg();
 
@@ -33,7 +33,8 @@ int console(Symbol *lookup, size_t lookup_len)
         MEM_CHECK(argv);
         f_free = 1;
 
-        if(handle_input(argv)) return 1;
+        if(handle_input(argv, symbols)) fprintf(stderr, 
+            "[CONSOLE]: Error handing input\n");
 
         memset(input_buffer, '\0', 100);
 
@@ -90,18 +91,83 @@ char **parse_input(char *input, size_t input_len, int *argc)
     return argv;
 }
 
-int handle_input(char **argv)
+int handle_input(char **argv, Symbol_Data *symbol)
 {
     switch(hash_cmd(argv[0]))
     {
         case EXIT:
             f_exit = 1;
             break;
+
+        case GENERATE:
+            return generate(argv, symbol);
+            break;
+
+        case PRINT:
+            return print_table(argv, symbol);
+            break;
+
         default:
             fprintf(stderr, "Command not found.\n");
             return 1;
     }
 
+    return 0;
+}
+
+int generate(char **argv, Symbol_Data *symbol)
+{
+    if(argv[1] == NULL || argv[2] == NULL)
+    {
+        fprintf(stderr, "generate [type] [M]\n");
+        return 1;
+    }
+    
+    /* Check if table null, otherwise free table first */
+    if(symbol->lookup != NULL)
+    {
+        free(symbol->lookup);
+    }
+
+    int type = hash_cmd(argv[1]);
+    int M = atoi(argv[2]);
+
+    if(type == DUMB) symbol->lookup = gen_lookup_QAM_dumb(M,
+        &symbol->lookup_len);
+    else 
+    {
+        fprintf(stderr, "Generation algorithm \"%s\" not found.\n", 
+        argv[1]);
+        return 1;
+    }
+
+    return 0;
+}
+
+int print_table(char **argv, Symbol_Data *symbol)
+{
+    if(argv[1] == NULL)
+    {
+        fprintf(stderr, "print lookup|sample\n");
+        return 1;
+    }
+
+    int type = hash_cmd(argv[1]);
+
+    if(type == LOOKUP)
+    {
+        print_lookup(symbol->lookup, symbol->lookup_len);
+    }
+    else if(type == SAMPLE)
+    {
+        print_lookup(symbol->sample, symbol->sample_len);
+    }
+    else
+    {
+        fprintf(stderr, "print lookup|sample\n");
+        return 1;
+    }
+    
     return 0;
 }
 

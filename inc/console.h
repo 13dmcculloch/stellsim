@@ -9,7 +9,19 @@
 #include "macros.h"
 
 /* Commands */
+/* These are for lower-case commands.
+ * Caps not supported. This is not DOS.
+ */
 #define EXIT 0x1ba 
+
+#define LOOKUP 0x29a
+#define SAMPLE 0x282
+
+#define GENERATE 0x34b
+#define DUMB 0x1a8
+
+#define PRINT 0x22d
+
 
 /* Functionality */
 /* User can generate lookup table from command line arguments. Therefore the
@@ -19,10 +31,13 @@
  * would be too cumbersome to provide all the functionality (for example
  * noise) through the command line arguments.
  */
-int console(Symbol *lookup, size_t lookup_len);
+int console(Symbol_Data *symbols);
 
 char **parse_input(char *input, size_t input_len, int *argc);
-int handle_input(char **argv);
+int handle_input(char **argv, Symbol_Data *symbol);
+
+int generate(char **argv, Symbol_Data *symbol);
+int print_table(char **argv, Symbol_Data *symbol);
 
 int free_argv(int argc, char ***argv);
 

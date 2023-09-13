@@ -7,6 +7,8 @@
 
 #include "console.h"
 
+int f_exit = 0;
+
 /* toy prototypes */
 void enter_console_msg();
 
@@ -17,7 +19,7 @@ int console(Symbol *lookup, size_t lookup_len)
     char input_buffer[100];
     memset(input_buffer, '\0', 100);
 
-    int f_free = 1;
+    int f_free = 1;  // 1 when argv malloc'd 
 
     /* Event loop */
     while(1)
@@ -29,19 +31,19 @@ int console(Symbol *lookup, size_t lookup_len)
         size_t input_len = sizeof(input_buffer);
         char **argv = parse_input(input_buffer, input_len, &argc);
         MEM_CHECK(argv);
+        f_free = 1;
 
-        print_input(argc, argv);
-
-        if(handle_input(input_buffer)) return 1;
+        if(handle_input(argv)) return 1;
 
         memset(input_buffer, '\0', 100);
 
-        if(!strcmp(argv[0], "exit\n"))
+        if(f_exit)
         {
             return free_argv(argc, &argv);
         }
 
         f_free = free_argv(argc, &argv);
+        if(f_free) fprintf(stderr, "[WARNING]: Failed to free args.\n");
     }
 
     return f_free;
@@ -90,7 +92,16 @@ char **parse_input(char *input, size_t input_len, int *argc)
 
 int handle_input(char **argv)
 {
-    /* no idea how to design this as of yet */
+    switch(hash_cmd(argv[0]))
+    {
+        case EXIT:
+            f_exit = 1;
+            break;
+        default:
+            fprintf(stderr, "Command not found.\n");
+            return 1;
+    }
+
     return 0;
 }
 
@@ -102,6 +113,19 @@ int free_argv(int argc, char ***argv)
     free(*argv);
 
     return 0;
+}
+
+int hash_cmd(const char *cmd)
+{
+    int sum = 0;
+
+    for(int i = 0; i < strlen(cmd); ++i)
+    {
+        if(cmd[i] == '\n') continue;
+        sum += cmd[i];
+    }
+
+    return sum;
 }
 
 void print_input(int argc, char **argv)

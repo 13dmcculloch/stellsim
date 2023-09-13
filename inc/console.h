@@ -9,7 +9,7 @@
 #include "macros.h"
 
 /* Commands */
-#define EXIT_COMMAND "exit"
+#define EXIT 0x1ba 
 
 /* Functionality */
 /* User can generate lookup table from command line arguments. Therefore the
@@ -26,4 +26,5 @@ int handle_input(char **argv);
 
 int free_argv(int argc, char ***argv);
 
+int hash_cmd(const char *cmd);
 void print_input(int argc, char **argv);

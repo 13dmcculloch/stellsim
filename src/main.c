@@ -28,6 +28,9 @@ char filename[100];
 Symbol *lookup = NULL;
 size_t lookup_len = 0;
 
+/* Global symbol data */
+Symbol_Data symbols;
+
 int main(int argc, char **argv)
 {
     if(set_flags(argc, argv))

@@ -20,6 +20,18 @@
 #include "macros.h"
 
 /* Symbol structs */
+struct Symbol_Data
+{
+    Symbol *lookup;
+    Symbol *sample;
+
+    int M;
+    size_t lookup_len;
+    size_t sample_len;
+}
+
+typedef struct Symbol_Data Symbol_Data;
+
 struct Symbol
 {
     double i;

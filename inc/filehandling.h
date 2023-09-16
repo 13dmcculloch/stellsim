@@ -17,4 +17,5 @@ Symbol *file_plr(const char *filename, size_t *len);  // polar notation
 
 /* Generic file functions */
 FILE *open_file(const char *filename);
+int save_sample(Symbol *s, size_t len, const char *filename);
 size_t count_lines(FILE *fp);

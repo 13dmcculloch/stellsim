@@ -15,7 +15,24 @@ Console under development.
 
 ### Commands
 
-TBC
+`[foo]` denotes an optional argument.
+
+`exit` cleanly exits the program.
+
+`generate dumb M` where M is the modulation order, will generate a modulation
+format with no Gray coding. For debugging uses mainly.
+
+`print lookup|sample` prints a table of lookup or sample symbols in memory.
+
+`draw lookup|sample [v]` will draw an 80x24 diagram of the lookup table values
+and if `sample`, it will draw the symbols represented as dots. As the diagram is
+the same size as the terminal, press `ENTER` to get back to the command line.
+
+`noise amplitude|phase [g]` destructively applies amplitude or phase noise to
+symbols stored in memory. `g` is the gain, a float, unadjusted (for now).
+
+`concat n` is a debug tool which makes n copies of the lookup table and stores
+them in memory.
 
 ### Notes
 

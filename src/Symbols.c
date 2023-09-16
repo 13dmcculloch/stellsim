@@ -210,6 +210,24 @@ double max_arg(const Symbol *s, size_t len)
     return max;
 }
 
+Symbol *cat_symbols(const Symbol *s, size_t len, size_t n, size_t *new_len)
+{
+    *new_len = n * len;
+
+    Symbol *ns = malloc(*new_len * sizeof(*ns));
+    MEM_CHECK2(ns);
+
+    for(int i = 0; i < *new_len; ++i)
+    {
+        for(int j = 0; j < len; ++j)
+        {
+            ns[j + (i * len)] = s[j];
+        }
+    }
+
+    return ns;
+}
+
 const Symbol_Ref BPSK[2] = {
     {-1,    0},
     {1,     0}

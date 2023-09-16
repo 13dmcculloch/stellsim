@@ -8,6 +8,4 @@
 #define COLS 80
 #define ROWS 24
 
-void draw_symbols(const Symbol *s, size_t len);
-
-int print_dot(const Symbol *s, size_t len, int row, int col);
+void draw_symbols(const Symbol *s, size_t len, char type);

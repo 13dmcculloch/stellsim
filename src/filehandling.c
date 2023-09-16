@@ -57,9 +57,26 @@ FILE *open_file(const char *filename)
 {
     FILE *fp = fopen(filename, "r");
     if(fp == NULL)
-        printf("Failed to open file %s.\n", filename);
+        fprintf(stderr, "Failed to open file %s.\n", filename);
 
     return fp;
+}
+
+int save_sample(Symbol *s, size_t len, const char *filename)
+{
+    FILE *fp = fopen(filename, "w");
+    if(fp == NULL)
+    {
+        fprintf(stderr, "Failed to open file %s.\n", filename);
+        return 1;
+    }
+    
+    for(int i = 0; i < len; ++i)
+    {
+        fprintf(fp, "%f,%f\n", s[i].i, s[i].q);
+    }
+
+    return 0;
 }
 
 size_t count_lines(FILE *fp)

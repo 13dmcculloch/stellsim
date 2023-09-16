@@ -111,8 +111,16 @@ int handle_input(char **argv, Symbol_Data *symbol)
             return draw_argand(argv, symbol);
             break;
 
+        case CONCAT:
+            return concat(argv, symbol);
+            break;
+
+        case NOISE:
+            return noise(argv, symbol);
+            break;
+
         default:
-            fprintf(stderr, "Command not found.\n");
+            fprintf(stderr, "handle_input: Command not found.\n");
             return 1;
     }
 
@@ -187,15 +195,66 @@ int draw_argand(char **argv, Symbol_Data *symbol)
 
     if(type == LOOKUP)
     {
-        draw_symbols(symbol->lookup, symbol->lookup_len);
+        draw_symbols(symbol->lookup, symbol->lookup_len, 'v');
     }
     else if(type == SAMPLE)
     {
-        draw_symbols(symbol->sample, symbol->sample_len);
+        draw_symbols(symbol->sample, symbol->sample_len, 0);
     }
     else
     {
         fprintf(stderr, "draw lookup|sample\n");
+        return 1;
+    }
+
+    /* stay on table (24 line terminal too short for >>>) */
+    while(!getchar());
+
+    return 0;
+}
+
+int concat(char **argv, Symbol_Data *symbol)
+{
+    int n;
+    if(argv[1] == NULL) n = 1;
+    else n = atoi(argv[1]);
+
+    symbol->sample = cat_symbols(symbol->lookup, symbol->lookup_len, n,
+        &symbol->sample_len);
+
+    return 0;
+}
+
+int noise(char **argv, Symbol_Data *symbol)
+{
+    if(argv[1] == NULL)
+    {
+        fprintf(stderr, "noise amplitude|phase [gain]\n");
+        return 1;
+    }
+
+    double gain;
+    if(argv[2] == NULL) gain = 1;
+    else gain = atof(argv[2]);
+
+    int type = hash_cmd(argv[1]); 
+
+    if(type == AMPLITUDE)
+    {
+        if(amplitude_noise(symbol->sample, symbol->sample_len, gain))
+            fprintf(stderr, "Error applying noise to sample.\n");
+    }
+
+    else if(type == PHASE)
+    {
+        if(phase_noise(symbol->sample, symbol->sample_len, gain))
+            fprintf(stderr, "Error applying noise to sample.\n");
+    }
+
+    else
+    {
+        fprintf(stderr, "noise amplitude|phase [gain]\n");
+
         return 1;
     }
 

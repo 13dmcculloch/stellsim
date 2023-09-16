@@ -8,10 +8,10 @@ CC=gcc
 CFLAGS=-I$(IDIR) -Wall -Wpedantic
 LIBS=-lm
 
-_DEPS = macros.h Symbols.h diagram_portable.h filehandling.h console.h
+_DEPS = macros.h Symbols.h diagram_portable.h filehandling.h console.h distribution.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
-_OBJ = main.o Symbols.o diagram_portable.o filehandling.o console.o
+_OBJ = main.o Symbols.o diagram_portable.o filehandling.o console.o distribution.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 $(ODIR)/%.o: $(LDIR)/%.c $(DEPS)

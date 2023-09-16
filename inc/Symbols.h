@@ -62,6 +62,9 @@ void print_lookup(const Symbol *l, size_t len);  // print_symbols = confusing
 double max_i(const Symbol *s, size_t len);
 double max_arg(const Symbol *s, size_t len);
 
+// copy symbols to new
+Symbol *cat_symbols(const Symbol *s, size_t len, size_t n, size_t *new_len);
+
 // construct a lookup table from an integer reference
 Symbol *construct_lookup(const Symbol_Ref *r, size_t len);
 // generate a lookup table from modulation order

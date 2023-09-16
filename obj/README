@@ -1,0 +1,2 @@
+This is where the object files go when make is called. If this directoy were
+not part of the repo, then make would fail.

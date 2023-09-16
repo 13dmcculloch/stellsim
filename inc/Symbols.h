@@ -20,7 +20,7 @@
 #include "macros.h"
 
 /* Symbol structs */
-struct Symbol
+typedef struct
 {
     double i;
     double q;
@@ -29,19 +29,15 @@ struct Symbol
 
     int val;  // actual value corresponding to symbol (should be == index)
     int count; // number of times symbol used (no memory impact)
-};
+} Symbol;
 
-typedef struct Symbol Symbol;
-
-struct Symbol_Ref
+typedef struct
 {
     int i;
     int q;
-};
+} Symbol_Ref;
 
-typedef struct Symbol_Ref Symbol_Ref;
-
-struct Symbol_Data
+typedef struct
 {
     Symbol *lookup;
     Symbol *sample;
@@ -49,9 +45,7 @@ struct Symbol_Data
     int M;
     size_t lookup_len;
     size_t sample_len;
-};
-
-typedef struct Symbol_Data Symbol_Data;
+} Symbol_Data;
 
 /* Functions */
 // cartesian
@@ -66,6 +60,7 @@ Symbol noise_symbol(Symbol s, double mag, double arg);
 void print_symbol(const Symbol s);
 void print_lookup(const Symbol *l, size_t len);  // print_symbols = confusing
 double max_i(const Symbol *s, size_t len);
+double max_arg(const Symbol *s, size_t len);
 
 // construct a lookup table from an integer reference
 Symbol *construct_lookup(const Symbol_Ref *r, size_t len);

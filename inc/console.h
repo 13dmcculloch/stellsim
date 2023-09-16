@@ -4,7 +4,7 @@
  */
 
 #include "Symbols.h"
-#include "diagram.h"
+#include "diagram_portable.h"
 #include "filehandling.h"
 #include "macros.h"
 
@@ -22,6 +22,8 @@
 
 #define PRINT 0x22d
 
+#define DRAW 0x1ae
+
 
 /* Functionality */
 /* User can generate lookup table from command line arguments. Therefore the
@@ -38,6 +40,7 @@ int handle_input(char **argv, Symbol_Data *symbol);
 
 int generate(char **argv, Symbol_Data *symbol);
 int print_table(char **argv, Symbol_Data *symbol);
+int draw_argand(char **argv, Symbol_Data *symbol);
 
 int free_argv(int argc, char ***argv);
 

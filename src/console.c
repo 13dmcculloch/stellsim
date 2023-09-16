@@ -107,6 +107,10 @@ int handle_input(char **argv, Symbol_Data *symbol)
             return print_table(argv, symbol);
             break;
 
+        case DRAW:
+            return draw_argand(argv, symbol);
+            break;
+
         default:
             fprintf(stderr, "Command not found.\n");
             return 1;
@@ -168,6 +172,33 @@ int print_table(char **argv, Symbol_Data *symbol)
         return 1;
     }
     
+    return 0;
+}
+
+int draw_argand(char **argv, Symbol_Data *symbol)
+{
+    if(argv[1] == NULL)
+    {
+        fprintf(stderr, "draw lookup|sample\n");
+        return 1;
+    }
+
+    int type = hash_cmd(argv[1]);
+
+    if(type == LOOKUP)
+    {
+        draw_symbols(symbol->lookup, symbol->lookup_len);
+    }
+    else if(type == SAMPLE)
+    {
+        draw_symbols(symbol->sample, symbol->sample_len);
+    }
+    else
+    {
+        fprintf(stderr, "draw lookup|sample\n");
+        return 1;
+    }
+
     return 0;
 }
 

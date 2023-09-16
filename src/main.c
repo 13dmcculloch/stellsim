@@ -1,12 +1,20 @@
+/* Entry point for stellsim.
+ *
+ * Douglas McCulloch, September 2023
+ */
+
 #include "console.h"
 
-Symbol_Data *symbols;  // <- these are meant to have random addresses
+/* rationale is that one can scale up to have multiple Symbol_Data's */
+/* console takes symbols so it is possible to alloc more
+ * Symbol_Data if necessary.
+ */
+Symbol_Data *symbols;
 
 void free_all(Symbol_Data *symbols);
 
 int main(int argc, char **argv)
 {
-    /* WHY DO i HAVE TO DO THIS????????? */
     symbols = malloc(sizeof(*symbols));
     MEM_CHECK(symbols);
 

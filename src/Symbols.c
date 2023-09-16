@@ -197,6 +197,19 @@ double max_i(const Symbol *s, size_t len)
     return max;
 }
 
+double max_arg(const Symbol *s, size_t len)
+{
+    /* an awful algorithm to get maximum argument value for print_diagram */
+    double max = 0;
+
+    for(size_t i = 0; i < len; i++)
+    {
+       if(s[i].arg > max) max = s[i].arg;
+    }
+
+    return max;
+}
+
 const Symbol_Ref BPSK[2] = {
     {-1,    0},
     {1,     0}

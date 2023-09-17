@@ -11,7 +11,9 @@ similar, but I decided that it would be nice to try making this in C.
 
 ### Synopsis
 
-Console under development.
+`[main]` enters console.
+
+`[main] [-s filename]` runs the script in `filename` and drops to console.
 
 ### Commands
 
@@ -21,6 +23,9 @@ Console under development.
 
 `generate dumb M` where M is the modulation order, will generate a modulation
 format with no Gray coding. For debugging uses mainly.
+
+`generate ref BPSK|QPSK|8PSK` constructs reference constellation using values
+predefined in .rodata.
 
 `print lookup|sample` prints a table of lookup or sample symbols in memory.
 
@@ -32,7 +37,7 @@ the same size as the terminal, press `ENTER` to get back to the command line.
 symbols stored in memory. `g` is the gain, a float, unadjusted (for now).
 
 `concat n` is a debug tool which makes n copies of the lookup table and stores
-them in memory.
+them in memory. To "restore" a noise-affected sample, rerun concat.
 
 ### Notes
 

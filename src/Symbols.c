@@ -217,7 +217,7 @@ Symbol *cat_symbols(const Symbol *s, size_t len, size_t n, size_t *new_len)
     Symbol *ns = malloc(*new_len * sizeof(*ns));
     MEM_CHECK2(ns);
 
-    for(int i = 0; i < *new_len; ++i)
+    for(int i = 0; i < n; ++i)
     {
         for(int j = 0; j < len; ++j)
         {

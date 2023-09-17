@@ -20,6 +20,10 @@
 
 #define GENERATE 0x34b
 #define DUMB 0x1a8
+#define REF 317
+#define BPSK_R 304
+#define QPSK_R 319
+#define HPSK_R 294
 
 #define PRINT 0x22d
 
@@ -44,6 +48,7 @@ int console(Symbol_Data *symbols);
 char **parse_input(char *input, size_t input_len, int *argc);
 int handle_input(char **argv, Symbol_Data *symbol);
 
+/*
 int generate(char **argv, Symbol_Data *symbol);
 int print_table(char **argv, Symbol_Data *symbol);
 int draw_argand(char **argv, Symbol_Data *symbol);
@@ -54,3 +59,4 @@ int free_argv(int argc, char ***argv);
 
 int hash_cmd(const char *cmd);
 void print_input(int argc, char **argv);
+*/

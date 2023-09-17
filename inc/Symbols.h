@@ -42,7 +42,6 @@ typedef struct
     Symbol *lookup;
     Symbol *sample;
 
-    int M;
     size_t lookup_len;
     size_t sample_len;
 } Symbol_Data;

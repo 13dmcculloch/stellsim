@@ -1,0 +1,4 @@
+generate dumb 4
+concat 16
+noise phase 0.1
+concat 16

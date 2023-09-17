@@ -1,0 +1,7 @@
+generate dumb 4
+print lookup
+concat 16
+noise phase 0.1
+draw sample
+concat 16
+exit

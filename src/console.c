@@ -9,6 +9,29 @@
 
 int f_exit = 0;
 
+static int free_argv(int argc, char ***argv)
+{
+    for(int i = 0; i < argc; ++i)
+        free((*argv)[i]);  // this is the correct grammar
+
+    free(*argv);
+
+    return 0;
+}
+
+int hash_cmd(const char *cmd)
+{
+    int sum = 0;
+
+    for(int i = 0; i < strlen(cmd); ++i)
+    {
+        if(cmd[i] == '\n') continue;
+        sum += cmd[i];
+    }
+
+    return sum;
+}
+
 /* toy prototypes */
 void enter_console_msg();
 
@@ -91,43 +114,36 @@ char **parse_input(char *input, size_t input_len, int *argc)
     return argv;
 }
 
-int handle_input(char **argv, Symbol_Data *symbol)
+static int predefined_lookup(char **argv, Symbol_Data *symbol)
 {
-    switch(hash_cmd(argv[0]))
+    int type = hash_cmd(argv[2]);
+
+    switch(type)
     {
-        case EXIT:
-            f_exit = 1;
-            break;
+    case BPSK_R:
+        symbol->lookup_len = sizeof(BPSK) / sizeof(BPSK[0]);
+        symbol->lookup = construct_lookup(BPSK, symbol->lookup_len);
+        break;
 
-        case GENERATE:
-            return generate(argv, symbol);
-            break;
+    case QPSK_R:
+        symbol->lookup_len = sizeof(QPSK) / sizeof(QPSK[0]);
+        symbol->lookup = construct_lookup(QPSK, symbol->lookup_len);
+        break;
 
-        case PRINT:
-            return print_table(argv, symbol);
-            break;
+    case HPSK_R:
+        symbol->lookup_len = sizeof(HPSK) / sizeof(HPSK[0]);
+        symbol->lookup = construct_lookup(HPSK, symbol->lookup_len);
+        break;
 
-        case DRAW:
-            return draw_argand(argv, symbol);
-            break;
-
-        case CONCAT:
-            return concat(argv, symbol);
-            break;
-
-        case NOISE:
-            return noise(argv, symbol);
-            break;
-
-        default:
-            fprintf(stderr, "handle_input: Command not found.\n");
-            return 1;
+    default:
+        fprintf(stderr, "generate ref BPSK|QPSK|8PSK\n");
+        return 1;
     }
 
     return 0;
 }
 
-int generate(char **argv, Symbol_Data *symbol)
+static int generate(char **argv, Symbol_Data *symbol)
 {
     if(argv[1] == NULL || argv[2] == NULL)
     {
@@ -146,6 +162,9 @@ int generate(char **argv, Symbol_Data *symbol)
 
     if(type == DUMB) symbol->lookup = gen_lookup_QAM_dumb(M,
         &symbol->lookup_len);
+    
+    else if(type == REF) return predefined_lookup(argv, symbol);
+
     else 
     {
         fprintf(stderr, "Generation algorithm \"%s\" not found.\n", 
@@ -156,7 +175,7 @@ int generate(char **argv, Symbol_Data *symbol)
     return 0;
 }
 
-int print_table(char **argv, Symbol_Data *symbol)
+static int print_table(char **argv, Symbol_Data *symbol)
 {
     if(argv[1] == NULL)
     {
@@ -183,7 +202,7 @@ int print_table(char **argv, Symbol_Data *symbol)
     return 0;
 }
 
-int draw_argand(char **argv, Symbol_Data *symbol)
+static int draw_argand(char **argv, Symbol_Data *symbol)
 {
     if(argv[1] == NULL)
     {
@@ -213,7 +232,7 @@ int draw_argand(char **argv, Symbol_Data *symbol)
     return 0;
 }
 
-int concat(char **argv, Symbol_Data *symbol)
+static int concat(char **argv, Symbol_Data *symbol)
 {
     int n;
     if(argv[1] == NULL) n = 1;
@@ -225,7 +244,7 @@ int concat(char **argv, Symbol_Data *symbol)
     return 0;
 }
 
-int noise(char **argv, Symbol_Data *symbol)
+static int noise(char **argv, Symbol_Data *symbol)
 {
     if(argv[1] == NULL)
     {
@@ -261,30 +280,49 @@ int noise(char **argv, Symbol_Data *symbol)
     return 0;
 }
 
-int free_argv(int argc, char ***argv)
-{
-    for(int i = 0; i < argc; ++i)
-        free((*argv)[i]);  // this is the correct grammar
 
-    free(*argv);
+void enter_console_msg()
+{
+    printf("Stellsim alpha console.\nDouglas McCulloch, September 2023.\n");
+}
+
+int handle_input(char **argv, Symbol_Data *symbol)
+{
+    switch(hash_cmd(argv[0]))
+    {
+        case EXIT:
+            f_exit = 1;
+            break;
+
+        case GENERATE:
+            return generate(argv, symbol);
+            break;
+
+        case PRINT:
+            return print_table(argv, symbol);
+            break;
+
+        case DRAW:
+            return draw_argand(argv, symbol);
+            break;
+
+        case CONCAT:
+            return concat(argv, symbol);
+            break;
+
+        case NOISE:
+            return noise(argv, symbol);
+            break;
+
+        default:
+            fprintf(stderr, "handle_input: Command not found.\n");
+            return 1;
+    }
 
     return 0;
 }
-
-int hash_cmd(const char *cmd)
-{
-    int sum = 0;
-
-    for(int i = 0; i < strlen(cmd); ++i)
-    {
-        if(cmd[i] == '\n') continue;
-        sum += cmd[i];
-    }
-
-    return sum;
-}
-
-void print_input(int argc, char **argv)
+/*
+static void print_input(int argc, char **argv)
 {
     printf("%d args.\n", argc);
 
@@ -293,8 +331,4 @@ void print_input(int argc, char **argv)
         printf("Cmd %d: %s\n", i, argv[i]);
     }
 }
-
-void enter_console_msg()
-{
-    printf("Stellsim alpha console.\nDouglas McCulloch, September 2023.\n");
-}
+*/

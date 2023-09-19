@@ -171,8 +171,21 @@ Symbol noise_symbol(Symbol s, double mag, double arg)
 void print_symbol(const Symbol s)
 {
     double arg_d = s.arg * 180 / M_PI;
-    printf("%d: i = \t%f, q = \t%f, mag = \t%f, arg = \t%f deg", 
+    printf("%d:\ti = %f,\tq = %f,\tmag = %f,\targ = %f deg", 
         s.val, s.i, s.q, s.mag, arg_d);
+}
+
+void print_symbol_cartesian(const Symbol s)
+{
+    printf("%d:\ti =\t%f,\tq = %f", 
+        s.val, s.i, s.q);
+}
+
+void print_symbol_polar(const Symbol s)
+{
+    double arg_d = s.arg * 180 / M_PI;
+    printf("%d:\tmag = %f,\targ = %f deg", 
+        s.val, s.mag, arg_d);
 }
 
 void print_lookup(const Symbol *l, size_t len)
@@ -184,6 +197,23 @@ void print_lookup(const Symbol *l, size_t len)
     }
 }
 
+void print_cartesian(const Symbol *s, size_t len)
+{
+    for(size_t i = 0; i < len; i++)
+    {
+        print_symbol_cartesian(s[i]);
+        printf("\n");
+    }
+}
+
+void print_polar(const Symbol *s, size_t len)
+{
+    for(size_t i = 0; i < len; i++)
+    {
+        print_symbol_polar(s[i]);
+        printf("\n");
+    }
+}
 double max_i(const Symbol *s, size_t len)
 {
     /* an awful algorithm to get maximum in-phase value for print_diagram */

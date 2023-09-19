@@ -53,6 +53,29 @@ Symbol *file_dbl(const char* filename, size_t *len)
     return s;
 }
 
+Symbol *file_plr(const char *filename, size_t *len)
+{
+    FILE *fp = open_file(filename);
+    if(fp == NULL) return NULL;
+
+    size_t n_symbols = count_lines(fp);
+
+    Symbol *s = malloc(n_symbols * sizeof(*s));
+
+    /* non-generic part: parse CSV of doubles */
+    double mag, arg; 
+    int idx = 0;
+    while(fscanf(fp, "%lf,%lf\n", &mag, &arg) == 2)
+    {
+        s[idx] = set_symbolp(mag, arg, idx);
+        ++idx;
+    }
+
+    *len = n_symbols;
+
+    return s;
+}
+
 FILE *open_file(const char *filename)
 {
     FILE *fp = fopen(filename, "r");

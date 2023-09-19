@@ -58,6 +58,8 @@ Symbol noise_symbol(Symbol s, double mag, double arg);
 // symbol functions
 void print_symbol(const Symbol s);
 void print_lookup(const Symbol *l, size_t len);  // print_symbols = confusing
+void print_cartesian(const Symbol *s, size_t len);
+void print_polar(const Symbol *s, size_t len);
 double max_i(const Symbol *s, size_t len);
 double max_arg(const Symbol *s, size_t len);
 

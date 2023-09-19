@@ -25,7 +25,9 @@
 #define QPSK_R 319
 #define HPSK_R 294
 
-#define PRINT 0x22d
+#define PRINTA 654
+#define PRINTC 656
+#define PRINTP 669
 
 #define DRAW 0x1ae
 
@@ -34,6 +36,11 @@
 #define NOISE 542
 #define AMPLITUDE 965
 #define PHASE 529
+
+#define LOAD 416
+#define INTEGER 750
+#define DOUBLE 635
+#define POLAR 542
 
 /* Functionality */
 /* User can generate lookup table from command line arguments. Therefore the

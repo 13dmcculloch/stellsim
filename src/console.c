@@ -7,7 +7,85 @@
 
 #include "console.h"
 
+/* toy prototypes */
+static void enter_console_msg();
+static void show_help();
+static int free_argv(int, char***);
+int hash_cmd(const char *cmd);
+static int predefined_lookup(char **argv, Symbol_Data *sybmol);
+static int load_lookup_file(char **argv, Symbol_Data *symbol);
+static int generate(char **argv, Symbol_Data *symbol);
+static int print_table(char **argv, Symbol_Data *symbol);
+static int print_table_c(char **argv, Symbol_Data *symbol);
+static int print_table_p(char **argv, Symbol_Data *symbol);
+static int draw_argand(char **argv, Symbol_Data *symbol);
+static int concat(char **argv, Symbol_Data *symbol);
+static int noise(char **argv, Symbol_Data *symbol);
+
 int f_exit = 0;
+
+int handle_input(char **argv, Symbol_Data *symbol)
+{
+    switch(hash_cmd(argv[0]))
+    {
+        case EXIT:
+            f_exit = 1;
+            break;
+
+        case GENERATE:
+            return generate(argv, symbol);
+            break;
+
+        case PRINTA:
+            return print_table(argv, symbol);
+            break;
+
+        case PRINTC:
+            return print_table_c(argv, symbol);
+            break;
+
+        case PRINTP:
+            return print_table_p(argv, symbol);
+            break;
+
+        case DRAW:
+            return draw_argand(argv, symbol);
+            break;
+
+        case CONCAT:
+            return concat(argv, symbol);
+            break;
+
+        case NOISE:
+            return noise(argv, symbol);
+            break;
+
+        case LOAD:
+            return load_lookup_file(argv, symbol);
+            break;
+
+        default:
+            fprintf(stderr, "handle_input: Command not found.\n");
+            show_help();
+            return 1;
+    }
+
+    return 0;
+}
+
+static void show_help()
+{
+    fputs("Global help:\n", stderr);
+    fputs("exit - exit Stellsim\n"
+        "generate ref BPSK|QPSK|8PSK - generate constellations from ROM\n"
+        "load [type] [filename] - load constellation from file\n"
+        "print(a|c|p) lookup|sample - print all, cartesian, polar" 
+        " representations\n"
+        "draw lookup|sample - draw constellation, samples\n"
+        "noise amplitude|phase [level] - add noise to sample\n"
+        "concat [n] - duplicate lookup table n times into sample\n",
+        stderr);
+}
 
 static int free_argv(int argc, char ***argv)
 {
@@ -32,9 +110,6 @@ int hash_cmd(const char *cmd)
     return sum;
 }
 
-/* toy prototypes */
-void enter_console_msg();
-
 int console(Symbol_Data *symbols)
 {
     enter_console_msg();
@@ -56,7 +131,8 @@ int console(Symbol_Data *symbols)
         MEM_CHECK(argv);
         f_free = 1;
 
-        if(handle_input(argv, symbols)) fprintf(stderr, 
+        if(input_buffer[0] == ' ' || input_buffer[0] == '\n') goto Free;
+        else if(handle_input(argv, symbols)) fprintf(stderr, 
             "[CONSOLE]: Error handing input\n");
 
         memset(input_buffer, '\0', 100);
@@ -64,8 +140,9 @@ int console(Symbol_Data *symbols)
         if(f_exit)
         {
             return free_argv(argc, &argv);
-        }
+        }    
 
+    Free:
         f_free = free_argv(argc, &argv);
         if(f_free) fprintf(stderr, "[WARNING]: Failed to free args.\n");
     }
@@ -111,6 +188,9 @@ char **parse_input(char *input, size_t input_len, int *argc)
         memcpy(argv[i], tok, tok_len);
     }
 
+    /* if last, then remove \n from end */
+    argv[*argc - 1][strlen(argv[*argc - 1]) - 1] = '\0';
+
     return argv;
 }
 
@@ -143,6 +223,39 @@ static int predefined_lookup(char **argv, Symbol_Data *symbol)
     return 0;
 }
 
+static int load_lookup_file(char **argv, Symbol_Data *symbol)
+{
+    if(argv[1] == NULL || argv[2] == NULL)
+    {
+        fputs("load integer|double|polar [filename]\n", stderr);
+        return 1;
+    }
+
+    int type = 0;
+    type = hash_cmd(argv[1]);
+
+    switch(type)
+    {
+    case INTEGER:
+        symbol->lookup = file_int(argv[2], &symbol->lookup_len);
+        break;
+    
+    case DOUBLE:
+        symbol->lookup = file_dbl(argv[2], &symbol->lookup_len);
+        break;
+
+    case POLAR:
+        symbol->lookup = file_plr(argv[2], &symbol->lookup_len);
+        break;
+
+    default:
+        fputs("load integer|double|polar [filename]\n", stderr);
+        return 1;
+    }
+
+    return 0;
+}
+    
 static int generate(char **argv, Symbol_Data *symbol)
 {
     if(argv[1] == NULL || argv[2] == NULL)
@@ -179,26 +292,87 @@ static int print_table(char **argv, Symbol_Data *symbol)
 {
     if(argv[1] == NULL)
     {
-        fprintf(stderr, "print lookup|sample\n");
+        fprintf(stderr, "printa lookup|sample\n");
         return 1;
     }
 
-    int type = hash_cmd(argv[1]);
+    int type = 0;
+    type = hash_cmd(argv[1]);
 
     if(type == LOOKUP)
     {
         print_lookup(symbol->lookup, symbol->lookup_len);
     }
+
     else if(type == SAMPLE)
     {
         print_lookup(symbol->sample, symbol->sample_len);
     }
+
     else
     {
-        fprintf(stderr, "print lookup|sample\n");
+        fprintf(stderr, "printa lookup|sample\n");
         return 1;
     }
     
+    return 0;
+}
+
+static int print_table_c(char **argv, Symbol_Data *symbol)
+{
+    if(argv[1] == NULL)
+    {
+        fputs("printc lookup|sample\n", stderr);
+        return 1;
+    }
+
+    int type = hash_cmd(argv[1]);
+
+    switch(type)
+    {
+    case LOOKUP:
+        print_cartesian(symbol->lookup, symbol->lookup_len);
+        break;
+
+    case SAMPLE:
+        print_cartesian(symbol->sample, symbol->sample_len);
+        break;
+
+    default:
+        fputs("printc lookup|sample\n", stderr);
+        return 1;
+
+    }
+
+    return 0;
+}
+
+static int print_table_p(char **argv, Symbol_Data *symbol)
+{
+    if(argv[1] == NULL)
+    {
+        fputs("printp lookup|sample\n", stderr);
+        return 1;
+    }
+
+    int type = hash_cmd(argv[1]);
+
+    switch(type)
+    {
+    case LOOKUP:
+        print_polar(symbol->lookup, symbol->lookup_len);
+        break;
+
+    case SAMPLE:
+        print_polar(symbol->sample, symbol->sample_len);
+        break;
+
+    default:
+        fputs("printp lookup|sample\n", stderr);
+        return 1;
+
+    }
+
     return 0;
 }
 
@@ -281,54 +455,7 @@ static int noise(char **argv, Symbol_Data *symbol)
 }
 
 
-void enter_console_msg()
+static void enter_console_msg()
 {
     printf("Stellsim alpha console.\nDouglas McCulloch, September 2023.\n");
 }
-
-int handle_input(char **argv, Symbol_Data *symbol)
-{
-    switch(hash_cmd(argv[0]))
-    {
-        case EXIT:
-            f_exit = 1;
-            break;
-
-        case GENERATE:
-            return generate(argv, symbol);
-            break;
-
-        case PRINT:
-            return print_table(argv, symbol);
-            break;
-
-        case DRAW:
-            return draw_argand(argv, symbol);
-            break;
-
-        case CONCAT:
-            return concat(argv, symbol);
-            break;
-
-        case NOISE:
-            return noise(argv, symbol);
-            break;
-
-        default:
-            fprintf(stderr, "handle_input: Command not found.\n");
-            return 1;
-    }
-
-    return 0;
-}
-/*
-static void print_input(int argc, char **argv)
-{
-    printf("%d args.\n", argc);
-
-    for(int i = 0; i < argc; ++i)
-    {
-        printf("Cmd %d: %s\n", i, argv[i]);
-    }
-}
-*/

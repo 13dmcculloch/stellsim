@@ -23,6 +23,7 @@ static int concat(char **argv, Symbol_Data *symbol);
 static int noise(char **argv, Symbol_Data *symbol);
 static int map(char **argv, Symbol_Data *symbol);
 static int maps(char **argv, Symbol_Data *symbol);
+static int save(char **argv, Symbol_Data *symbol);
 
 int f_exit = 0;
 

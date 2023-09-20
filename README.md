@@ -53,6 +53,11 @@ predefined in .rodata.
 Files are CSVs. See the directory `constellations/` to see an exmple of an
 `integer` constellation file.
 
+`map [filename]` will map the stream at `filename` onto the modulation format
+in memory and currently prints the symbols to stdout.
+
+`maps [string]` is a wrapper for `map` taking a string input.
+
 `print(a|c|p) lookup|sample` prints a table of symbol values for the lookup
 reference constellation or for the sample in memory.
 

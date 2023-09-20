@@ -6,6 +6,7 @@
 #include "Symbols.h"
 #include "diagram_portable.h"
 #include "distribution.h"
+#include "mapper.h"
 #include "filehandling.h"
 #include "macros.h"
 
@@ -41,6 +42,9 @@
 #define INTEGER 750
 #define DOUBLE 635
 #define POLAR 542
+
+#define MAP 318
+#define MAPS 433
 
 /* Functionality */
 /* User can generate lookup table from command line arguments. Therefore the

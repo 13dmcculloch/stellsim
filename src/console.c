@@ -21,6 +21,8 @@ static int print_table_p(char **argv, Symbol_Data *symbol);
 static int draw_argand(char **argv, Symbol_Data *symbol);
 static int concat(char **argv, Symbol_Data *symbol);
 static int noise(char **argv, Symbol_Data *symbol);
+static int map(char **argv, Symbol_Data *symbol);
+static int maps(char **argv, Symbol_Data *symbol);
 
 int f_exit = 0;
 
@@ -64,6 +66,14 @@ int handle_input(char **argv, Symbol_Data *symbol)
             return load_lookup_file(argv, symbol);
             break;
 
+        case MAP:
+            return map(argv, symbol);
+            break;
+
+        case MAPS:
+            return maps(argv, symbol);
+            break;
+
         default:
             fprintf(stderr, "handle_input: Command not found.\n");
             show_help();
@@ -79,6 +89,8 @@ static void show_help()
     fputs("exit - exit Stellsim\n"
         "generate ref BPSK|QPSK|8PSK - generate constellations from ROM\n"
         "load [type] [filename] - load constellation from file\n"
+        "map [filename] - map stream to symbols\n"
+        "maps [string] - map string to symbols\n"
         "print(a|c|p) lookup|sample - print all, cartesian, polar" 
         " representations\n"
         "draw lookup|sample - draw constellation, samples\n"
@@ -133,7 +145,7 @@ int console(Symbol_Data *symbols)
 
         if(input_buffer[0] == ' ' || input_buffer[0] == '\n') goto Free;
         else if(handle_input(argv, symbols)) fprintf(stderr, 
-            "[CONSOLE]: Error handing input\n");
+            "[CONSOLE]: Error handling input\n");
 
         memset(input_buffer, '\0', 100);
 
@@ -454,6 +466,29 @@ static int noise(char **argv, Symbol_Data *symbol)
     return 0;
 }
 
+static int map(char **argv, Symbol_Data *symbol)
+{
+    if(argv[1] == NULL)
+    {
+        fputs("map [filename]\n(for now)\n", stderr);
+        return 1;
+    }
+
+    FILE *i_s = open_file(argv[1]);
+
+    return mapper(i_s, stdout, symbol->lookup, symbol->lookup_len);
+}
+
+static int maps(char **argv, Symbol_Data *symbol)
+{
+    if(argv[1] == NULL)
+    {
+        fputs("maps [str]\n", stderr);
+        return 1;
+    }
+
+    return mapper_s(argv[1], stdout, symbol->lookup, symbol->lookup_len);
+}
 
 static void enter_console_msg()
 {

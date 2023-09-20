@@ -53,6 +53,9 @@ int phase_noise(Symbol *s, size_t len, double gain)
             return 1;
         }
 
+        /* convert to radians */
+        app = app * M_PI / 180;
+
         s[i] = noise_symbol(s[i], 0, app * gain);
     }
 

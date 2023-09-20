@@ -40,7 +40,7 @@ int main(int argc, char **argv)
         default:
             fprintf(stderr, "main: command not found.\n");
             fprintf(stderr, "stellsim -s [filename].\n.");
-            return 1;
+            return EXIT_FAILURE;
         }
     }
 
@@ -49,7 +49,7 @@ int main(int argc, char **argv)
         if(script(symbols, filename))
         {
             fprintf(stderr, "main: parsing script failed.\n");
-            return 1;
+            return EXIT_FAILURE;
         }
     }
 
@@ -75,7 +75,7 @@ int script(Symbol_Data *symbols, char *filename)
         if(handle_input(argv, symbols))
         {
             fprintf(stderr, "Error handling input from script.\n");
-            return 1;
+            return EXIT_FAILURE;
         }
     }
 

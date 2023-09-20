@@ -27,6 +27,8 @@ Symbol *file_int(const char* filename, size_t *len)
 
     *len = n_symbols;
 
+    fclose(fp);
+
     return s;
 }
 
@@ -50,6 +52,8 @@ Symbol *file_dbl(const char* filename, size_t *len)
 
     *len = n_symbols;
 
+    fclose(fp);
+
     return s;
 }
 
@@ -72,6 +76,8 @@ Symbol *file_plr(const char *filename, size_t *len)
     }
 
     *len = n_symbols;
+
+    fclose(fp);
 
     return s;
 }
@@ -98,6 +104,8 @@ int save_sample(Symbol *s, size_t len, const char *filename)
     {
         fprintf(fp, "%f,%f\n", s[i].i, s[i].q);
     }
+
+    fclose(fp);
 
     return 0;
 }

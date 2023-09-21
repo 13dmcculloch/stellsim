@@ -82,6 +82,17 @@ Symbol *file_plr(const char *filename, size_t *len)
     return s;
 }
 
+int stream_symbolf(const Symbol *s, FILE *o_s)
+{
+    if(fprintf(o_s, "%f,%f\n", s->i, s->q) < 0)
+    {
+        fputs("stream_symbolf: error writing symbol to stream.\n", stderr);
+        return 1;
+    }
+
+    return 0;
+}
+
 FILE *open_file(const char *filename)
 {
     FILE *fp = fopen(filename, "r");

@@ -6,11 +6,16 @@
 #include "mapper.h"
 
 static int map_stream(FILE *i_s, FILE *o_s, Symbol *lookup,
-    int bits, uint32_t mask, int mod_order);
+    int bits, uint32_t mask, int mod_order, long rewind);
 
 static long map32(uint32_t buf, Symbol *lookup,
     int bits, uint32_t mask, int mod_order, FILE *o_s);
 
+static int handle_io_map(const Symbol *res, FILE *o_s);
+
+/*                 */
+/* Mapper function */
+/*                 */
 int mapper(FILE *i_s, FILE *o_s, Symbol *lookup, size_t lookup_len)
 {
     /* check if lookup table is populated */
@@ -20,13 +25,34 @@ int mapper(FILE *i_s, FILE *o_s, Symbol *lookup, size_t lookup_len)
         MEM_CHECK(lookup);
     }
 
-    /* mod_order = bits/symbol */
     int mod_order = (int)log2((double)lookup_len);
 
     uint32_t mask = 0;
+    long buffer_shorten = 0;
+    
+    if(mod_order > 31)
+    {
+        fputs("mapper: modulation order larger than buffer.\n", stderr);
+        return 1;
+    }
+
+    /* calculate size of buffer from modulation order */
+    int remainder;
+    int buf_size = sizeof(mask) * 8;  // i.e. 32
+    while((remainder = buf_size % mod_order))  // i.e. 32 % 3 = 2
+    {
+        buffer_shorten += 8;  // must align to char
+        buf_size -= buffer_shorten;  // i.e. 24
+    }
+
+    if(!buf_size || (buf_size % 8))
+    {
+        fputs("mapper: invalid modulation order (see manual).\n", stderr);
+        return 1;
+    }
 
     /* bits is the number of full symbols that fit into buffer */
-    int bits = sizeof(mask) * 8 / mod_order;
+    int bits = buf_size / mod_order;
 
     /* generate the mask */
     for(int i = 0; i < mod_order; ++i) 
@@ -34,37 +60,23 @@ int mapper(FILE *i_s, FILE *o_s, Symbol *lookup, size_t lookup_len)
 
     /* map stream loop */
     while(!map_stream(i_s, o_s, lookup,
-        bits, mask, mod_order));
+        bits, mask, mod_order, buffer_shorten / 8))
+    {
+    /*
+        if(handle_io_map(&res, o_s))
+        {
+            fputs("mapper: error handling io.\n", stderr);
+            return 1;
+        }
+        */
+    }
 
     return 0;
 }
-
-int mapper_s(char *s, FILE *o_s, Symbol *lookup, size_t lookup_len)
-{
-    FILE *fp = fopen(TEMP_FILENAME, "w");
-    if(fp == NULL)
-    {
-        fputs("mapper: failed to open tmp file.\n", stderr);
-        return 1;
-    }
-
-    if(!fwrite(s, strlen(s) + 1, 1, fp))
-    {
-        fputs("mapper: failed to write to tmp file.\n", stderr);
-        return 1;
-    }
-
-    fclose(fp);
-
-    {
-    FILE *fp = open_file(TEMP_FILENAME);
-
-    return mapper(fp, o_s, lookup, lookup_len);
-    }
-}
     
+
 static int map_stream(FILE *i_s, FILE *o_s, Symbol *lookup,
-    int bits, uint32_t mask, int mod_order)
+    int bits, uint32_t mask, int mod_order, long rewind)
 {
     uint32_t buffer = 0;
     int f_stop = 0;
@@ -83,6 +95,8 @@ static int map_stream(FILE *i_s, FILE *o_s, Symbol *lookup,
          */
         f_stop = 1;
     }
+
+    fseek(i_s, -rewind, SEEK_CUR);
 
     buffer = htonl(buffer);
 
@@ -111,12 +125,43 @@ static long map32(uint32_t buf, Symbol *lookup,
     {
         int val = buf & (mask >> mod_order * i);
         val >>= (sizeof(buf) * 8 - mod_order * (i + 1));
-        Symbol sym = lookup[val];
 
         /* i/o bit. Better to return sym? Deal with it higher up? */
+        /*
         puts("");
-        print_symbol(sym);
+        print_symbol(*res);
+        */
+        handle_io_map(&lookup[val], stdout);
     }
 
     return 0;
+}
+
+static int handle_io_map(const Symbol *res, FILE *o_s)
+{
+    return stream_symbolf(res, o_s);
+}
+    
+int mapper_s(char *s, FILE *o_s, Symbol *lookup, size_t lookup_len)
+{
+    FILE *fp = fopen(TEMP_FILENAME, "w");
+    if(fp == NULL)
+    {
+        fputs("mapper: failed to open tmp file.\n", stderr);
+        return 1;
+    }
+
+    if(!fwrite(s, strlen(s) + 1, 1, fp))
+    {
+        fputs("mapper: failed to write to tmp file.\n", stderr);
+        return 1;
+    }
+
+    fclose(fp);
+
+    {
+    FILE *fp = open_file(TEMP_FILENAME);
+
+    return mapper(fp, o_s, lookup, lookup_len);
+    }
 }

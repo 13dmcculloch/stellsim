@@ -66,10 +66,10 @@ int script(Symbol_Data *symbols, char *filename)
     FILE *fp = fopen(filename, "r");
 
     char line[100];
-    int argc = 1;
 
     while(fgets(line, sizeof(line), fp) != NULL)
     {
+        int argc = 1;
         char **argv = parse_input(line, sizeof(line), &argc);
 
         if(handle_input(argv, symbols))
@@ -77,6 +77,8 @@ int script(Symbol_Data *symbols, char *filename)
             fprintf(stderr, "Error handling input from script.\n");
             return EXIT_FAILURE;
         }
+
+        free_argv(argc, &argv);
     }
 
     return 0;

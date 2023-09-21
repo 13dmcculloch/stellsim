@@ -59,14 +59,14 @@ int console(Symbol_Data *symbols);
 char **parse_input(char *input, size_t input_len, int *argc);
 int handle_input(char **argv, Symbol_Data *symbol);
 
+int free_argv(int argc, char ***argv);
+
 /*
 int generate(char **argv, Symbol_Data *symbol);
 int print_table(char **argv, Symbol_Data *symbol);
 int draw_argand(char **argv, Symbol_Data *symbol);
 int concat(char **argv, Symbol_Data *symbol);
 int noise(char **argv, Symbol_Data *symbol);
-
-int free_argv(int argc, char ***argv);
 
 int hash_cmd(const char *cmd);
 void print_input(int argc, char **argv);

@@ -10,7 +10,7 @@
 /* toy prototypes */
 static void enter_console_msg();
 static void show_help();
-static int free_argv(int, char***);
+int free_argv(int, char***);
 int hash_cmd(const char *cmd);
 static int predefined_lookup(char **argv, Symbol_Data *sybmol);
 static int load_lookup_file(char **argv, Symbol_Data *symbol);
@@ -100,7 +100,7 @@ static void show_help()
         stderr);
 }
 
-static int free_argv(int argc, char ***argv)
+int free_argv(int argc, char ***argv)
 {
     for(int i = 0; i < argc; ++i)
         free((*argv)[i]);  // this is the correct grammar

@@ -93,6 +93,13 @@ int stream_symbolf(const Symbol *s, FILE *o_s)
     return 0;
 }
 
+int benchmark(FILE *i_s)
+{
+    /* count symbols coming through i_s over a time frame */
+    /* average and print S/s to stderr */
+    return 0;
+}
+
 FILE *open_file(const char *filename)
 {
     FILE *fp = fopen(filename, "r");

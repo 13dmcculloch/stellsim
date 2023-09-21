@@ -17,6 +17,7 @@ Symbol *file_plr(const char *filename, size_t *len);  // polar notation
 
 /* io functions */
 int stream_symbolf(const Symbol *s, FILE *o_s);
+int benchmark(FILE *o_s);
 
 /* Generic file functions */
 FILE *open_file(const char *filename);

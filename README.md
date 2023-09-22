@@ -1,18 +1,29 @@
-# stellsim - Symbol mapper (simulator)
+# stellsim - Symbol mapper
 
-A program that can modulate binary data to an array of coherent symbols 
+A program that can map binary data to an array of coherent symbols 
 to simulate or indeed implement modulation in software. This project is a
 hobby, but it may have its uses in SDR when it is finished. It should be an
 easily accessible way for arbitrary constellation diagrams to be loaded in
 and mapped in software.
 
-can: read - "will be able to"
-
 #### Current abilities
 
 - load arbitrary constellation diagrams
+- map data stream/string to stream of sybmols (`%f,%f`)
 - print and draw
 - apply amplitude and phase noise (arbitrary units) to symbol sample
+
+#### Benchmark
+
+I measured this with 
+`./main -s [setup] | pv --line-mode --rate -lb > /dev/null`.
+
+- with float output: 7.8 Mbps 8PSK
+- with no output: 75 Mbps 8PSK (raw speed)
+
+Possible improvements include stack lookup table, normalised float output,
+less control flow in the mapper function, fewer dereferencing operations
+during mapping, and static variables within mapper functions.
 
 #### Larger goals
 
@@ -32,6 +43,9 @@ systems using this language.
 `[main]` enters console.
 
 `[main] [-s filename]` runs the script in `filename` and drops to console.
+See script examples in `scripts/`. The syntax is `[command]\n`. There is no
+control flow. Scripts are quite useful for setting up the modulation format
+and options quickly after executing.
 
 There are two tables of symbols in memory, `lookup`, and `sample`. `lookup`
 is the lookup table of the constellation diagram of the working modulation
@@ -50,13 +64,14 @@ predefined in .rodata.
 - `double`
 - `polar` where the polar coords are doubles
 
-Files are CSVs. See the directory `constellations/` to see an exmple of an
+Files are CSVs. In `constellations/`, see an exmple of an
 `integer` constellation file.
 
 `map [filename]` will map the stream at `filename` onto the modulation format
 in memory and currently prints the symbols to stdout.
 
-`maps [string]` is a wrapper for `map` taking a string input.
+`maps [string]` is a wrapper for `map` taking a string input. Creates a temp
+string in the working directory.
 
 `print(a|c|p) lookup|sample` prints a table of symbol values for the lookup
 reference constellation or for the sample in memory.

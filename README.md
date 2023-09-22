@@ -18,8 +18,8 @@ and mapped in software.
 I measured this with 
 `./main -s [setup] | pv --line-mode --rate -lb > /dev/null`.
 
-- with float output: 7.8 Mbps 8PSK
-- with no output: 75 Mbps 8PSK (raw speed)
+- with formatted float output: 7.8 Mbps 8PSK
+- with `puts("")` output: 75 Mbps 8PSK
 
 Possible improvements include stack lookup table, normalised float output,
 less control flow in the mapper function, fewer dereferencing operations
